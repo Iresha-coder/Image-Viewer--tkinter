@@ -1,7 +1,6 @@
 from tkinter import *
 from PIL import ImageTk, Image
 from tkinter import filedialog
-from preferences import *
 from image_create import image_create
 
 global root
@@ -20,8 +19,6 @@ global btn_width
 frame_main = LabelFrame(root, bd=0, bg="white")
 frame_btn = LabelFrame(frame_main, bd=0, bg="white")
 frame_inter = LabelFrame(frame_main, bd=0, bg="white")
-
-pref_ico = ImageTk.PhotoImage(Image.open("C:/Users/iresh/Documents/black-24dp/2x/outline_settings_black_24dp.png"))
 
 theme_op = [
 	"Light",
@@ -270,6 +267,7 @@ def img_enter():
 	global path_list
 	global img_num
 	global image_number
+	global frame_main
 	global frame_img_l
 	global frame_sub
 	global frame_a_btn
@@ -277,6 +275,12 @@ def img_enter():
 	global img_list
 	global val
 	global pref_open
+	global imnum_en
+	frame_main.pack_forget()
+	if clicked_theme.get() == "Dark":
+		frame_main = LabelFrame(root, bd=0, bg="black")
+	else:
+		frame_main = LabelFrame(root, bd=0, bg="white")
 	pref_open = 0
 	image_number = 0
 	val = 1
@@ -302,17 +306,18 @@ def img_enter():
 		open_btn = Button(frame_btn, text="Open Image", bg="black", fg="white", command=open_img, width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
 		pref = Button(frame_btn, text="Preferences", bg="black", fg="white", command=lambda: pref_func(clicked_font.get(), clicked_font_size.get(), btn_width), width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
 	else:
-		open_btn = Button(frame_btn, text="Open Image", bg="white", command=open_img, width=btn_width)
+		open_btn = Button(frame_btn, text="Open Image", bg="white", command=open_img, width=btn_width ,font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
 		pref = Button(frame_btn, text="Preferences", bg="white", command=lambda: pref_func(clicked_font.get(), 
 		clicked_font_size.get(), btn_width), width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
-	img_list = image_create(img_num, path_list)
-	img_lab = Label(frame_sub, image=img_list[image_number], padx=10, pady=10)
+	img_list = image_create(path_list)
+	img_lab = Label(frame_sub, image=img_list[0], padx=10, pady=10)
 	if int(img_num) == 1:
 		button_forward = Button(frame_img_l, text=">>", bg="lightgray", state=DISABLED, bd=1, font=("Segoe UI Bold", 18))
 	else:
 		button_forward = Button(frame_img_l, text=">>", bg="lightgray", command=lambda: btn_forward(image_number), bd=1, font=("Segoe UI Bold", 18))
 	button_backward = Button(frame_img_l, text="<<", bg="lightgray", state=DISABLED, bd=1, font=("Segoe UI Bold", 18))
 
+	frame_main.pack()
 	frame_btn.pack()
 	frame_img_l.pack()
 	frame_sub.pack()
@@ -349,8 +354,15 @@ def save_pref():
 		pass
 
 def open_img():
-	global open_w
+	global root
+	global frame_main
+	global frame_btn
 	global imnum_en
+	global is_in_open_img
+	is_in_open_img = True
+	frame_main.pack_forget()
+	frame_btn.pack_forget()
+	root.geometry("900x190")
 	if clicked_theme.get() == "Dark":
 		if clicked_font.get() == "Helvetica":
 			font = "Helvetica"
@@ -360,14 +372,21 @@ def open_img():
 			font = "Segoe UI Bold"
 		elif clicked_font.get() == "Segoe UI Light":
 			font = "Segoe UI Light"
-		open_w = Toplevel()
-		open_w.title("Open Image")
-		open_w.configure(bg="black")
-		open_w.geometry("630x115")
-		ask_im_num = Label(open_w, text="How many images do you want to open?", bd=2, bg="black", fg="white", font=(font, 16))
-		imnum_en = Entry(open_w, bd=0, bg="lightGray", font=(font, 14))
-		im_enter_btn = Button(open_w, text="Enter", bg="black", fg="white", font=(font, 12), command=img_enter)
+		frame_main = LabelFrame(root, bd=0, bg="black")
+		frame_btn = LabelFrame(frame_main, bd=0, bg="black")
+		frame_open_img = LabelFrame(frame_main, bd=0, bg="black")
+		open_btn = Button(frame_btn, text="Open Image", bg="black", fg="white", command=open_img, width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
+		pref = Button(frame_btn, text="Preferences", bg="black", fg="white", command=lambda: pref_func(clicked_font.get(), clicked_font_size.get(), btn_width), width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
+		ask_im_num = Label(frame_open_img, text="How many images do you want to open?", bd=2, bg="black", fg="white", font=(font, 16))
+		imnum_en = Entry(frame_open_img, bd=0, bg="lightGray", font=(font, 14))
+		im_enter_btn = Button(frame_open_img, text="Enter", bg="black", fg="white", font=(font, 12), command=img_enter)
 
+		frame_main.pack()
+		frame_btn.pack()
+		frame_open_img.pack()
+
+		open_btn.pack(side=LEFT)
+		pref.pack(side=RIGHT)
 		ask_im_num.grid(row=0, column=0, ipadx=10, ipady=10)
 		imnum_en.grid(row=0, column=1)
 		im_enter_btn.grid(row=1, column=0, columnspan=2, ipadx=10, ipady=5)
@@ -380,17 +399,25 @@ def open_img():
 			font = "Segoe UI Bold"
 		elif clicked_font.get() == "Segoe UI Light":
 			font = "Segoe UI Light"
-		open_w = Toplevel()
-		open_w.title("Open Image")
-		open_w.configure(bg="white")
-		open_w.geometry("630x115")
-		ask_im_num = Label(open_w, text="How many images do you want to open?", bd=2, bg="white", font=(font, 16))
-		imnum_en = Entry(open_w, bd=0, bg="lightGray", font=(font, 14))
-		im_enter_btn = Button(open_w, text="Enter", font=(font, 12), command=img_enter)
+		frame_main = LabelFrame(root, bd=0, bg="white")
+		frame_open_img = LabelFrame(frame_main, bd=0, bg="white")
+		frame_btn = LabelFrame(frame_main, bd=0, bg="black")
+		open_btn = Button(frame_btn, text="Open Image", bg="white", command=open_img, width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
+		pref = Button(frame_btn, text="Preferences", bg="white", command=lambda: pref_func(clicked_font.get(), clicked_font_size.get(), btn_width), width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
+		ask_im_num = Label(frame_open_img, text="How many images do you want to open?", bd=2, bg="white", font=(font, 16))
+		imnum_en = Entry(frame_open_img, bd=0, bg="lightGray", font=(font, 14))
+		im_enter_btn = Button(frame_open_img, text="Enter", font=(font, 12), command=img_enter)
 
-		ask_im_num.grid(row=0, column=0, ipadx=10, ipady=10)
+		frame_main.pack()
+		frame_btn.pack()
+		frame_open_img.pack()
+
+		open_btn.pack(side=LEFT)
+		pref.pack(side=RIGHT)
+		ask_im_num.grid(row=0, column=0, ipadx=10, ipady=20)
 		imnum_en.grid(row=0, column=1)
-		im_enter_btn.grid(row=1, column=0, columnspan=2, ipadx=10, ipady=5)
+		im_enter_btn.grid(row=1, column=0, columnspan=2, ipadx=20, ipady=10)
+
 
 def pref_func(font, fontsize, btn_width):
 	global pref_open
@@ -487,4 +514,4 @@ head.grid(row=0, column=0, ipadx=10, ipady=10)
 space.grid(row=1, column=0)
 intro.grid(row=2, column=0)
 
-root.mainloop()		
+root.mainloop()
