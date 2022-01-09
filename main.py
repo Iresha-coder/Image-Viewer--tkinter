@@ -1,3 +1,7 @@
+# Image Viewer
+# Made by Iresha Samarakoon
+# Git repo: https://github.com/Iresha-coder/Image-Viewer--tkinter/
+
 from tkinter import *
 from PIL import ImageTk, Image
 from tkinter import filedialog
@@ -263,8 +267,7 @@ def btn_forward(im_n):
 	button_backward.pack(side=LEFT, padx=0, pady=10, ipadx=10, ipady=5)
 	button_forward.pack(side=RIGHT, padx=0, pady=10, ipadx=10, ipady=5)
 
-def img_enter():
-	global path_list
+def img_enter(path_list):
 	global img_num
 	global image_number
 	global frame_main
@@ -284,14 +287,9 @@ def img_enter():
 	pref_open = 0
 	image_number = 0
 	val = 1
-	path_list = []
 	img_list = []
-	img_num = imnum_en.get()
 	frame_btn.pack_forget()
-	for i in range(1, int(img_num) + 1):
-		root.filename = filedialog.askopenfilename(initialdir="C:/Users/iresh/Pictures", title="Select A File", filetypes=(("PNG Files", "*.png"), ("JPEG Files", "*.jpeg"), ("JPG Files", ".jpg"), ("All Files", "*.*")))
-		path_list.append(str(root.filename))
-		frame_inter.pack_forget()
+	img_num = len(path_list)
 	if clicked_theme.get() == "Dark":
 		frame_img_l = LabelFrame(frame_main, bd=0, bg="black")
 		frame_sub = LabelFrame(frame_img_l, bd=0, bg="black")
@@ -377,9 +375,11 @@ def open_img():
 		frame_open_img = LabelFrame(frame_main, bd=0, bg="black")
 		open_btn = Button(frame_btn, text="Open Image", bg="black", fg="white", command=open_img, width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
 		pref = Button(frame_btn, text="Preferences", bg="black", fg="white", command=lambda: pref_func(clicked_font.get(), clicked_font_size.get(), btn_width), width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
-		ask_im_num = Label(frame_open_img, text="How many images do you want to open?", bd=2, bg="black", fg="white", font=(font, 16))
-		imnum_en = Entry(frame_open_img, bd=0, bg="lightGray", font=(font, 14))
-		im_enter_btn = Button(frame_open_img, text="Enter", bg="black", fg="white", font=(font, 12), command=img_enter)
+
+		root.filename = filedialog.askopenfilenames(initialdir="%SYSTEM%", title="Select A File", filetypes=(
+			("PNG Files", "*.png"), ("JPEG Files", "*.jpeg"), ("JPG Files", ".jpg"), ("All Files", "*.*")))
+
+		img_enter(list(root.filename))
 
 		frame_main.pack()
 		frame_btn.pack()
@@ -387,9 +387,6 @@ def open_img():
 
 		open_btn.pack(side=LEFT)
 		pref.pack(side=RIGHT)
-		ask_im_num.grid(row=0, column=0, ipadx=10, ipady=10)
-		imnum_en.grid(row=0, column=1)
-		im_enter_btn.grid(row=1, column=0, columnspan=2, ipadx=10, ipady=5)
 	else:
 		if clicked_font.get() == "Helvetica":
 			font = "Helvetica"
