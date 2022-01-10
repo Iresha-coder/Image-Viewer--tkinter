@@ -12,7 +12,7 @@ global root
 root = Tk()
 root.title("Image Viewer")
 root.iconbitmap('C:/Users')
-root.geometry("590x400")
+root.state('zoomed')
 root.configure(bg="white")
 
 global frame_main
@@ -401,9 +401,11 @@ def open_img():
 		frame_btn = LabelFrame(frame_main, bd=0, bg="black")
 		open_btn = Button(frame_btn, text="Open Image", bg="white", command=open_img, width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
 		pref = Button(frame_btn, text="Preferences", bg="white", command=lambda: pref_func(clicked_font.get(), clicked_font_size.get(), btn_width), width=btn_width, font=(clicked_font.get(), chk_font_size(clicked_font_size.get())))
-		ask_im_num = Label(frame_open_img, text="How many images do you want to open?", bd=2, bg="white", font=(font, 16))
-		imnum_en = Entry(frame_open_img, bd=0, bg="lightGray", font=(font, 14))
-		im_enter_btn = Button(frame_open_img, text="Enter", font=(font, 12), command=img_enter)
+
+		root.filename = filedialog.askopenfilenames(initialdir="%SYSTEM%", title="Select A File", filetypes=(
+			("PNG Files", "*.png"), ("JPEG Files", "*.jpeg"), ("JPG Files", ".jpg"), ("All Files", "*.*")))
+
+		img_enter(list(root.filename))
 
 		frame_main.pack()
 		frame_btn.pack()
@@ -411,11 +413,8 @@ def open_img():
 
 		open_btn.pack(side=LEFT)
 		pref.pack(side=RIGHT)
-		ask_im_num.grid(row=0, column=0, ipadx=10, ipady=20)
-		imnum_en.grid(row=0, column=1)
-		im_enter_btn.grid(row=1, column=0, columnspan=2, ipadx=20, ipady=10)
-
-
+		
+		
 def pref_func(font, fontsize, btn_width):
 	global pref_open
 	global l_font_size
